@@ -20,7 +20,6 @@ public class HealthUI : MonoBehaviour
     {
         _deadText.gameObject.SetActive(false);
         _panel.gameObject.SetActive(false);
-        _healthPoints.text = _player.HealthPoints.ToString();
     }
 
     private void OnEnable()

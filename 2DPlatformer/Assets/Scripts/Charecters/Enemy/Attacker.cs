@@ -8,6 +8,8 @@ public class Attacker : MonoBehaviour
     private IDamageble _damageble;
 
     public event Action CanAttack;
+    public event Action CanNotAttack;
+    public event Action Attacked;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
@@ -21,9 +23,15 @@ public class Attacker : MonoBehaviour
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.TryGetComponent(out IDamageble damageble))
+        {
             _damageble = null;
+            CanNotAttack?.Invoke();
+        }
     }
 
-    public void Attack() =>
+    public void Attack()
+    {
         _damageble?.TakeDamage(_damage);
+        Attacked?.Invoke();
+    }
 }

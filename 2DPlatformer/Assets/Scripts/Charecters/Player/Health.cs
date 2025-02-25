@@ -1,10 +1,9 @@
 public class Health
 {
-    public float HealthPoints { get; private set; }
-
     public Health(float health) =>
         HealthPoints = health;
 
+    public float HealthPoints { get; private set; }
     public bool IsAlive { get; private set; } = true;
 
     public void TakeDamage(float damage)

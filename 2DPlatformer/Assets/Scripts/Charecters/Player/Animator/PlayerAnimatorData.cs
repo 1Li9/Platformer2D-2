@@ -9,5 +9,6 @@ public static class PlayerAnimatorData
         public static readonly int IsJumped = Animator.StringToHash(nameof(IsJumped));
         public static readonly int VerticalVelocity = Animator.StringToHash(nameof(VerticalVelocity));
         public static readonly int HorizontalSpeed = Animator.StringToHash(nameof(HorizontalSpeed));
+        public static readonly int IsAttacked = Animator.StringToHash(nameof(IsAttacked));
     }
 }

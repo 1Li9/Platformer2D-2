@@ -22,6 +22,12 @@ public class EnemyAttackState : IState
         _timerCoroutine = _timer.DoActionRepeating(() => _attacker.Attack(), _attackTime);
     }
 
-    public void Exit() =>
+    public void Exit()
+    {
+        if (_timerCoroutine == null | _timer == null)
+            return;
+
+        _timer.StopCoroutine(_timerCoroutine);
         _timerCoroutine = null;
+    }
 }

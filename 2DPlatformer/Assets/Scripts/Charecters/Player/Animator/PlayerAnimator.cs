@@ -6,6 +6,7 @@ public class PlayerAnimator : MonoBehaviour
 {
     [SerializeField] private Animator _animator;
     [SerializeField] private GroundChecker _groundChecker;
+    [SerializeField] private Attacker _attacker;
 
     private Player _player;
     private Rigidbody2D _rigidbody;
@@ -16,11 +17,19 @@ public class PlayerAnimator : MonoBehaviour
     private void Start() =>
         _rigidbody = _player.GetRigidbody();
 
-    private void OnEnable() =>
+    private void OnEnable()
+    {
         _player.Dead += UpdateDead;
+        _attacker.Attacked += UpdateTriggerIsAtacked;
 
-    private void OnDisable() =>
+    }
+
+    private void OnDisable()
+    {
         _player.Dead -= UpdateDead;
+        _attacker.Attacked += UpdateTriggerIsAtacked;
+
+    }
 
     private void Update()
     {
@@ -51,4 +60,7 @@ public class PlayerAnimator : MonoBehaviour
 
     private void UpdateDead() =>
         _animator.SetTrigger(PlayerAnimatorData.Params.Dead);
+
+    private void UpdateTriggerIsAtacked() =>
+        _animator.SetTrigger(PlayerAnimatorData.Params.IsAttacked);
 }
