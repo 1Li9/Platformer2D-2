@@ -6,13 +6,14 @@ public class Enemy : MonoBehaviour, IDamageble
 {
     [SerializeField] private Timer _timer;
 
-    [SerializeField] private PatrolZone _zone;
+    [SerializeField] private AttentionZone _zone;
     [SerializeField] private Attacker _attacker;
     [SerializeField] private TargetsMap _map;
     [SerializeField] private Target _playerTarget;
     [SerializeField] private float _speed;
     [SerializeField] private float _attackTime;
     [SerializeField] private float _beginHealthPoints;
+    [SerializeField] private float _deathTime;
 
     private CharacterFlipper _flipper;
     private Health _health;
@@ -20,9 +21,11 @@ public class Enemy : MonoBehaviour, IDamageble
     private EnemyPatrolState _patrolState;
     private EnemyFollowState _followState;
     private EnemyAttackState _attackState;
+    private EnemyDeathState _deathState;
+
+    private IState _currentState;
 
     public event Action Dead;
-    public IState CurrentState { get; private set; }
 
     private void Awake()
     {
@@ -33,8 +36,9 @@ public class Enemy : MonoBehaviour, IDamageble
         _patrolState = new EnemyPatrolState(follower, _map);
         _followState = new EnemyFollowState(follower, _playerTarget);
         _attackState = new EnemyAttackState(_attacker, _attackTime, _timer);
+        _deathState = new EnemyDeathState(this, _timer, _deathTime);
 
-        CurrentState = _patrolState;
+        _currentState = _patrolState;
     }
 
     private void OnEnable() =>
@@ -43,11 +47,8 @@ public class Enemy : MonoBehaviour, IDamageble
     private void OnDisable() =>
         UnsubscribeActions();
 
-    private void Update()
-    {
-        if(_health.IsAlive)
-            CurrentState.Update();
-    }
+    private void Update() =>
+        _currentState.Update();
 
     public void TakeDamage(float damage)
     {
@@ -60,28 +61,34 @@ public class Enemy : MonoBehaviour, IDamageble
         {
             Dead?.Invoke();
             UnsubscribeActions();
-            ChangeStateToPatrol();
+            ChangeStateToDeath();
         }
     }
 
     private void ChangeStateToPatrol()
     {
-        CurrentState.Exit();
-        CurrentState = _patrolState;
+        _currentState.Exit();
+        _currentState = _patrolState;
     }
 
     private void ChangeStateToFollow()
     {
-        CurrentState.Exit();
-        CurrentState = _followState;
+        _currentState.Exit();
+        _currentState = _followState;
     }
 
     private void ChangeStateToAttack()
     {
-        CurrentState.Exit();
-        CurrentState = _attackState;
-    }    
-    
+        _currentState.Exit();
+        _currentState = _attackState;
+    }
+
+    private void ChangeStateToDeath()
+    {
+        _currentState.Exit();
+        _currentState = _deathState;
+    }
+
     private void SubscribeActions()
     {
         _zone.PlayerSpotted += ChangeStateToFollow;

@@ -12,24 +12,25 @@ public class Player : MonoBehaviour, IMoveble, IDamageble
     [SerializeField] private KeyCode _jumpButton = KeyCode.Space;
     [SerializeField] private KeyCode _attackButton = KeyCode.Mouse0;
 
-    private Rigidbody2D _rigidbody;
     private InputReader _inputReader;
     private Mover _mover;
     private Jumper _jumper;
     private CharacterFlipper _flipper;
     private Health _health;
 
+    public Rigidbody2D Rigitbody { get; private set; }
+
     public event Action Dead;
     public event Action<float> OnHealthPointsChanged;
 
     private void Awake()
     {
-        _rigidbody = GetComponent<Rigidbody2D>();
+        Rigitbody = GetComponent<Rigidbody2D>();
         _inputReader = GetComponent<InputReader>();
-        _mover = new(this);
-        _jumper = new(this);
-        _flipper = new(this);
-        _health = new(_beginHealthPoints);
+        _mover = new Mover(this);
+        _jumper = new Jumper(this);
+        _flipper = new CharacterFlipper(this);
+        _health = new Health(_beginHealthPoints);
         OnHealthPointsChanged?.Invoke(_health.HealthPoints);
     }
 
@@ -46,7 +47,7 @@ public class Player : MonoBehaviour, IMoveble, IDamageble
     }
 
     public Rigidbody2D GetRigidbody() =>
-        _rigidbody;
+        Rigitbody;
 
     public void TakeDamage(float damage)
     {

@@ -1,7 +1,7 @@
 using System;
 using UnityEngine;
 
-public class PatrolZone : MonoBehaviour
+public class AttentionZone : MonoBehaviour
 {
     public event Action PlayerSpotted;
     public event Action PlayerLost;
