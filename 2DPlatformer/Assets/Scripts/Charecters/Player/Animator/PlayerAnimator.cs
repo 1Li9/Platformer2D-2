@@ -15,7 +15,7 @@ public class PlayerAnimator : MonoBehaviour
         _player = GetComponent<Player>();
 
     private void Start() =>
-        _rigidbody = _player.GetRigidbody();
+        _rigidbody = _player.Rigitbody;
 
     private void OnEnable()
     {

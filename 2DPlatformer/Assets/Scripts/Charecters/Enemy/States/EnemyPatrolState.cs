@@ -1,18 +1,18 @@
 public class EnemyPatrolState : IState
 {
-    private const float ChangeTargetDistance = .2f;
+    private const float ChangeTarget = .2f;
 
-    private Follower _follower;
-    private TargetsMap _map;
-
-    public EnemyPatrolState(Follower follower, TargetsMap map)
+    public IState Update(Enemy context)
     {
-        _follower = follower;
-        _map = map;
+        if (context.Parameters.Get(ParametersData.Params.IsPlayerSpotted).Value)
+            return new EnemyFollowState();
+
+        TargetsMap targetsMap = context.TargetsMap;
+
+        context.Follower.Follow(targetsMap.CurrentTarget, () => targetsMap.SelectNextTarget(), ChangeTarget);
+
+        return this;
     }
 
-    public void Update() =>
-        _follower.Follow(_map.CurrentTarget, () => _map.SelectNextTarget(), ChangeTargetDistance);
-
-    public void Exit() { }
+    public void Exit(Enemy enemy) { }
 }

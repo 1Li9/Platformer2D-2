@@ -1,9 +1,10 @@
 using UnityEngine;
 
-public class Coin : SpawnableObject 
+public class Aid : SpawnableObject
 {
-    [SerializeField] private int _amount;
-    public int Amount
+    [SerializeField] private float _healthPoints;
+
+    public float HealthPoints
     {
         get
         {
@@ -11,7 +12,7 @@ public class Coin : SpawnableObject
                 return 0;
 
             Interact();
-            return _amount;
+            return _healthPoints;
         }
     }
 }

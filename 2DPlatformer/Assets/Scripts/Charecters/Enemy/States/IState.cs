@@ -1,6 +1,5 @@
 public interface IState
 {
-    public void Update();
-
-    public void Exit();
+    public IState Update(Enemy context);
+    public void Exit(Enemy enemy);
 }

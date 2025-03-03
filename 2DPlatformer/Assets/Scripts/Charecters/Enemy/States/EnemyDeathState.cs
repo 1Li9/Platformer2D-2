@@ -1,33 +1,27 @@
 using UnityEngine;
-
 public class EnemyDeathState : IState
 {
-    private MonoBehaviour _context;
-    private Timer _timer;
-    private float _deathTime;
-    private Coroutine _timerCoroutine;
+    private readonly float _deadTime = 2f;
 
-    public EnemyDeathState(MonoBehaviour context, Timer timer, float deathTime)
+    private Coroutine _timerAction;
+
+    public IState Update(Enemy context)
     {
-        _context = context;
-        _timer = timer;
-        _deathTime = deathTime;
+        if (_timerAction != null)
+            return this;
+
+        context.Rigidbody.isKinematic = true;
+        context.Collider.enabled = false;
+        _timerAction = context.Timer.DoActionDelayed(() => Exit(context), _deadTime);
+
+        return this;
     }
 
-    public void Update()
+    public void Exit(Enemy context)
     {
-        if (_timerCoroutine != null)
-            return;
+        context.StopCoroutine(_timerAction);
+        _timerAction = null;
 
-        _timerCoroutine = _timer.DoActionDelayed(() => Object.Destroy(_context.gameObject), _deathTime);
-    }
-
-    public void Exit()
-    {
-        if (_timerCoroutine == null | _timer == null)
-            return;
-
-        _timer.StopCoroutine(_timerCoroutine);
-        _timerCoroutine = null;
+        Object.Destroy(context.gameObject);
     }
 }

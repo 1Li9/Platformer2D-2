@@ -1,21 +1,18 @@
-using System;
-
 public class EnemyFollowState : IState
 {
-    private const float AttackDistance = 1f;
-
-    private Follower _follower;
-    private Target _playerTarget;
-    private Attacker _attacker;
-
-    public EnemyFollowState(Follower follower, Target playerTarger)
+    public IState Update(Enemy context)
     {
-        _follower = follower;
-        _playerTarget = playerTarger;
+        if (context.Parameters.Get(ParametersData.Params.IsPlayerSpotted).Value == false)
+            return new EnemyPatrolState();
+        else if(context.Parameters.Get(ParametersData.Params.CanAttack).Value)
+            return new EnemyAttackState();
+
+        IState nextState = this;
+
+        context.Follower.Follow(context.PlayerTarget);
+
+        return nextState;
     }
 
-    public void Update() =>
-        _follower.Follow(_playerTarget, AttackDistance);
-
-    public void Exit() { }
+    public void Exit(Enemy enemy) { }
 }

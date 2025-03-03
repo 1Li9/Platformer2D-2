@@ -1,44 +1,56 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(EnemyAnimator))]
+[RequireComponent(typeof(Collider2D))]
 public class Enemy : MonoBehaviour, IDamageble
 {
-    [SerializeField] private Timer _timer;
-
-    [SerializeField] private AttentionZone _zone;
-    [SerializeField] private Attacker _attacker;
-    [SerializeField] private TargetsMap _map;
-    [SerializeField] private Target _playerTarget;
-    [SerializeField] private float _speed;
-    [SerializeField] private float _attackTime;
     [SerializeField] private float _beginHealthPoints;
-    [SerializeField] private float _deathTime;
+    [SerializeField] private float _moveSpeed;
+    [SerializeField] private float _attackCooldownTime;
+    [SerializeField] private Timer _timer;
+    [SerializeField] private TargetsMap _targetsMap;
+    [SerializeField] private AttentionZone _attentionZone;
+    [SerializeField] private Target _playerTarget;
+    [SerializeField] private Attacker _attacker;
 
-    private CharacterFlipper _flipper;
     private Health _health;
-
-    private EnemyPatrolState _patrolState;
-    private EnemyFollowState _followState;
-    private EnemyAttackState _attackState;
-    private EnemyDeathState _deathState;
+    private CharacterFlipper _flipper;
 
     private IState _currentState;
+    private EnemyDeathState _deathState;
 
     public event Action Dead;
+
+    public float AttackCooldownTime => _attackCooldownTime;
+    public Timer Timer => _timer;
+    public TargetsMap TargetsMap => _targetsMap;
+    public Target PlayerTarget => _playerTarget;
+    public Attacker Attacker => _attacker;
+    public Follower Follower { get; private set; }
+    public Parameters Parameters { get; private set; }
+    public Collider2D Collider { get; private set; }
+    public Rigidbody2D Rigidbody { get; private set; }
 
     private void Awake()
     {
         _health = new Health(_beginHealthPoints);
-        _flipper = new(this);
-        Follower follower = new(this, _flipper, _speed);
+        _flipper = new CharacterFlipper(this);
+        _deathState = new EnemyDeathState();
 
-        _patrolState = new EnemyPatrolState(follower, _map);
-        _followState = new EnemyFollowState(follower, _playerTarget);
-        _attackState = new EnemyAttackState(_attacker, _attackTime, _timer);
-        _deathState = new EnemyDeathState(this, _timer, _deathTime);
+        Follower = new(this, _flipper, _moveSpeed);
 
-        _currentState = _patrolState;
+        List<Parameter> parameters = new List<Parameter>()
+        {
+            new Parameter(nameof(ParametersData.Params.IsPlayerSpotted)),
+            new Parameter(nameof(ParametersData.Params.CanAttack))
+        };
+
+        Parameters = new Parameters(parameters);
+        _currentState = new EnemyPatrolState();
+
+        Collider = GetComponent<Collider2D>();
+        Rigidbody = GetComponent<Rigidbody2D>();
     }
 
     private void OnEnable() =>
@@ -48,7 +60,7 @@ public class Enemy : MonoBehaviour, IDamageble
         UnsubscribeActions();
 
     private void Update() =>
-        _currentState.Update();
+        _currentState = _currentState.Update(this);
 
     public void TakeDamage(float damage)
     {
@@ -59,49 +71,27 @@ public class Enemy : MonoBehaviour, IDamageble
 
         if (_health.IsAlive == false)
         {
+            _currentState.Exit(this);
+            _currentState = _deathState;
             Dead?.Invoke();
-            UnsubscribeActions();
-            ChangeStateToDeath();
         }
-    }
-
-    private void ChangeStateToPatrol()
-    {
-        _currentState.Exit();
-        _currentState = _patrolState;
-    }
-
-    private void ChangeStateToFollow()
-    {
-        _currentState.Exit();
-        _currentState = _followState;
-    }
-
-    private void ChangeStateToAttack()
-    {
-        _currentState.Exit();
-        _currentState = _attackState;
-    }
-
-    private void ChangeStateToDeath()
-    {
-        _currentState.Exit();
-        _currentState = _deathState;
     }
 
     private void SubscribeActions()
     {
-        _zone.PlayerSpotted += ChangeStateToFollow;
-        _zone.PlayerLost += ChangeStateToPatrol;
-        _attacker.CanAttack += ChangeStateToAttack;
-        _attacker.CanNotAttack += ChangeStateToPatrol;
+        _attentionZone.PlayerSpotted += () => Parameters.Get(ParametersData.Params.IsPlayerSpotted).Value = true;
+        _attentionZone.PlayerLost += () => Parameters.Get(ParametersData.Params.IsPlayerSpotted).Value = false;
+
+        _attacker.CanAttack += () => Parameters.Get(ParametersData.Params.CanAttack).Value = true;
+        _attacker.CanNotAttack += () => Parameters.Get(ParametersData.Params.CanAttack).Value = false;
     }
 
     private void UnsubscribeActions()
     {
-        _zone.PlayerSpotted -= ChangeStateToFollow;
-        _zone.PlayerLost -= ChangeStateToPatrol;
-        _attacker.CanAttack -= ChangeStateToAttack;
-        _attacker.CanNotAttack -= ChangeStateToPatrol;
+        _attentionZone.PlayerSpotted -= () => Parameters.Get(ParametersData.Params.IsPlayerSpotted).Value = true;
+        _attentionZone.PlayerLost -= () => Parameters.Get(ParametersData.Params.IsPlayerSpotted).Value = false;
+
+        _attacker.CanAttack -= () => Parameters.Get(ParametersData.Params.CanAttack).Value = true;
+        _attacker.CanNotAttack -= () => Parameters.Get(ParametersData.Params.CanAttack).Value = false;
     }
 }

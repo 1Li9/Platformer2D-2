@@ -7,6 +7,8 @@ public class Player : MonoBehaviour, IMoveble, IDamageble
     [SerializeField] private float _beginHealthPoints;
     [SerializeField] private float _jumpForce;
     [SerializeField] private float _speed;
+    [SerializeField] private float _attackCooldownTime;
+    [SerializeField] private Timer _timer;
     [SerializeField] private GroundChecker _groundChecker;
     [SerializeField] private Attacker _attacker;
     [SerializeField] private KeyCode _jumpButton = KeyCode.Space;
@@ -46,9 +48,6 @@ public class Player : MonoBehaviour, IMoveble, IDamageble
         _inputReader.OnInputChanged -= Attack;
     }
 
-    public Rigidbody2D GetRigidbody() =>
-        Rigitbody;
-
     public void TakeDamage(float damage)
     {
         if (_health.IsAlive == false)
@@ -60,6 +59,12 @@ public class Player : MonoBehaviour, IMoveble, IDamageble
 
         if (_health.IsAlive == false)
             Dead?.Invoke();
+    }
+
+    public void Heal(float healthPoints)
+    {
+        _health.Heal(healthPoints);
+        OnHealthPointsChanged?.Invoke(_health.HealthPoints);
     }
 
     private void ProcessMovement(InputInformation information)
@@ -82,6 +87,6 @@ public class Player : MonoBehaviour, IMoveble, IDamageble
             return;
 
         if (information.KeyCode == _attackButton)
-            _attacker.Attack();
+            _attacker.Attack(_timer, _attackCooldownTime);
     }
 }

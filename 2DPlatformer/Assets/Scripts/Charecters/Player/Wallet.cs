@@ -9,9 +9,9 @@ public class Wallet : MonoBehaviour
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if (collision.TryGetComponent(out Coin point))
+        if (collision.TryGetComponent(out Coin coin))
         {
-            _coinsCount += point.GetCoinAmount();
+            _coinsCount += coin.Amount;
             CoinsCountChanged?.Invoke(_coinsCount);
         }
     }

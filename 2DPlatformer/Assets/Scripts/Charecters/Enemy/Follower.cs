@@ -28,6 +28,6 @@ public class Follower
             _flipper.Flip();
     }
 
-    public void Follow(Target target, float doActionDistanñe) =>
-        Follow(target, delegate () { }, doActionDistanñe);
+    public void Follow(Target target) =>
+        Follow(target, delegate () { }, 0f);
 }

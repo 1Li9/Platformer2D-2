@@ -8,26 +8,26 @@ public class EnemyAnimator : MonoBehaviour
 
     private Enemy _enemy;
 
-    private void Awake()
+    private void Awake() =>
+        _enemy = GetComponent<Enemy>();
+
+    private void OnEnable() =>
+        SubscribeActions();
+
+    private void OnDisable() =>
+        UnsubscribeActions();
+
+    private void SubscribeActions()
     {
-        _enemy= GetComponent<Enemy>();
+        _attacker.Attacked += () => _animator.SetTrigger(EnemyAnimatorData.Params.IsAttacked);
+
+        _enemy.Dead += () => _animator.SetTrigger(EnemyAnimatorData.Params.Dead);
     }
 
-    private void OnEnable()
+    private void UnsubscribeActions()
     {
-        _attacker.Attacked += UpdateTriggerIsAtacked;
-        _enemy.Dead+= UpdateDead;
+        _attacker.Attacked -= () => _animator.SetTrigger(EnemyAnimatorData.Params.IsAttacked);
+
+        _enemy.Dead -= () => _animator.SetTrigger(EnemyAnimatorData.Params.Dead);
     }
-
-    private void OnDisable()
-    {
-        _attacker.Attacked -= UpdateTriggerIsAtacked;
-        _enemy.Dead += UpdateDead;
-    }
-
-    private void UpdateTriggerIsAtacked() =>
-        _animator.SetTrigger(EnemyAnimatorData.Params.IsAttacked);
-
-    private void UpdateDead() =>
-        _animator.SetTrigger(EnemyAnimatorData.Params.Dead);
 }

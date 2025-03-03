@@ -10,9 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 7137941984682979784}
   - component: {fileID: 2448147026425997940}
-  - component: {fileID: 4104218756027110437}
+  - component: {fileID: -4378274042006322693}
   m_Layer: 0
-  m_Name: Coin (0)
+  m_Name: Aid
   m_TagString: Untagged
   m_Icon: {fileID: 5721338939258241955, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
@@ -69,7 +69,7 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5078125
---- !u!114 &4104218756027110437
+--- !u!114 &-4378274042006322693
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -78,11 +78,11 @@ MonoBehaviour:
   m_GameObject: {fileID: 224265644357368094}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ab558d5fe213f924ab8737c772105740, type: 3}
+  m_Script: {fileID: 11500000, guid: e156b817e1db2524eb60110200f76cb8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   _view: {fileID: 2763443619119674334}
-  _amount: 1
+  _healthPoints: 10
 --- !u!1 &6954150198926895317
 GameObject:
   m_ObjectHideFlags: 0
@@ -159,7 +159,7 @@ SpriteRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 1
   m_Sprite: {fileID: 8980438598086963491, guid: ede4b03d4049f481a80ce6756418b385, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0, g: 1, b: 0.050292015, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0

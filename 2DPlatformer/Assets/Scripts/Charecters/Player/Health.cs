@@ -16,4 +16,12 @@ public class Health
             IsAlive = false;
         }
     }
+
+    public void Heal(float health)
+    {
+        if (IsAlive == false)
+            return;
+
+        HealthPoints += health;
+    }
 }
