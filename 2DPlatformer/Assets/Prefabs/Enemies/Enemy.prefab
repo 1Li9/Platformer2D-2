@@ -102,7 +102,6 @@ GameObject:
   - component: {fileID: 8776181219952683126}
   - component: {fileID: 3768298436865841400}
   - component: {fileID: 5682818072104004092}
-  - component: {fileID: 4707996933452041032}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -206,23 +205,10 @@ MonoBehaviour:
   _moveSpeed: 2
   _attackCooldownTime: 1
   _timer: {fileID: 0}
+  _animator: {fileID: 3272127111727457363}
   _targetsMap: {fileID: 0}
   _attentionZone: {fileID: 5683495754521518079}
   _playerTarget: {fileID: 0}
-  _attacker: {fileID: 3901545233387118798}
---- !u!114 &4707996933452041032
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1308568397252078355}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ae545bc56c02d9a4f9ab99b74c2606f4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _animator: {fileID: 3272127111727457363}
   _attacker: {fileID: 3901545233387118798}
 --- !u!1 &4154382371251292845
 GameObject:

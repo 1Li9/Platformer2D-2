@@ -1,21 +1,21 @@
-using UnityEngine;
-public class EnemyAttackState : IState
+using System.Collections.Generic;
+
+public class EnemyAttackState : State
 {
-    public IState Update(Enemy enemy)
+    private Enemy _context;
+
+    public EnemyAttackState(Enemy context)
     {
-        if (enemy.Parameters.Get(ParametersData.Params.CanAttack).Value == false)
+        _context = context;
+
+        EnterConditions = new List<Parameter>()
         {
-            Exit(enemy);
-
-            return new EnemyFollowState();
-        }
-
-        enemy.Attacker.Attack(enemy.Timer, enemy.AttackCooldownTime);
-
-        return this;
+            new Parameter(nameof(ParametersData.Params.CanAttack), true)
+        };
     }
 
-    public void Exit(Enemy enemy)
-    {
-    }
+    public override void Update() =>
+        _context.Attacker.Attack(_context.Timer, _context.AttackCooldownTime);
+
+    public override void Exit() { }
 }

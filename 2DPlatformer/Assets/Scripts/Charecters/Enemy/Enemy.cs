@@ -9,6 +9,7 @@ public class Enemy : MonoBehaviour, IDamageble
     [SerializeField] private float _moveSpeed;
     [SerializeField] private float _attackCooldownTime;
     [SerializeField] private Timer _timer;
+    [SerializeField] private Animator _animator;
     [SerializeField] private TargetsMap _targetsMap;
     [SerializeField] private AttentionZone _attentionZone;
     [SerializeField] private Target _playerTarget;
@@ -17,8 +18,8 @@ public class Enemy : MonoBehaviour, IDamageble
     private Health _health;
     private CharacterFlipper _flipper;
 
-    private IState _currentState;
-    private EnemyDeathState _deathState;
+    private StateMachine _stateMachine;
+    private EnemyAnimator _enemyAnimator;
 
     public event Action Dead;
 
@@ -36,18 +37,19 @@ public class Enemy : MonoBehaviour, IDamageble
     {
         _health = new Health(_beginHealthPoints);
         _flipper = new CharacterFlipper(this);
-        _deathState = new EnemyDeathState();
-
         Follower = new(this, _flipper, _moveSpeed);
 
         List<Parameter> parameters = new List<Parameter>()
         {
             new Parameter(nameof(ParametersData.Params.IsPlayerSpotted)),
-            new Parameter(nameof(ParametersData.Params.CanAttack))
+            new Parameter(nameof(ParametersData.Params.CanAttack)),
+            new Parameter(nameof(ParametersData.Params.IsDead))
         };
-
         Parameters = new Parameters(parameters);
-        _currentState = new EnemyPatrolState();
+        EnemyStatesPool enemyStatesPool = new(this);
+        _stateMachine = new StateMachine(this, enemyStatesPool);
+
+        _enemyAnimator = new EnemyAnimator(this, _animator);
 
         Collider = GetComponent<Collider2D>();
         Rigidbody = GetComponent<Rigidbody2D>();
@@ -60,7 +62,7 @@ public class Enemy : MonoBehaviour, IDamageble
         UnsubscribeActions();
 
     private void Update() =>
-        _currentState = _currentState.Update(this);
+        _stateMachine.Update();
 
     public void TakeDamage(float damage)
     {
@@ -71,8 +73,7 @@ public class Enemy : MonoBehaviour, IDamageble
 
         if (_health.IsAlive == false)
         {
-            _currentState.Exit(this);
-            _currentState = _deathState;
+            Parameters.Get(ParametersData.Params.IsDead).Value = true;
             Dead?.Invoke();
         }
     }
@@ -82,8 +83,8 @@ public class Enemy : MonoBehaviour, IDamageble
         _attentionZone.PlayerSpotted += () => Parameters.Get(ParametersData.Params.IsPlayerSpotted).Value = true;
         _attentionZone.PlayerLost += () => Parameters.Get(ParametersData.Params.IsPlayerSpotted).Value = false;
 
-        _attacker.CanAttack += () => Parameters.Get(ParametersData.Params.CanAttack).Value = true;
-        _attacker.CanNotAttack += () => Parameters.Get(ParametersData.Params.CanAttack).Value = false;
+        _attacker.BecameAbleToAttack += () => Parameters.Get(ParametersData.Params.CanAttack).Value = true;
+        _attacker.BecameUnableToAttack += () => Parameters.Get(ParametersData.Params.CanAttack).Value = false;
     }
 
     private void UnsubscribeActions()
@@ -91,7 +92,7 @@ public class Enemy : MonoBehaviour, IDamageble
         _attentionZone.PlayerSpotted -= () => Parameters.Get(ParametersData.Params.IsPlayerSpotted).Value = true;
         _attentionZone.PlayerLost -= () => Parameters.Get(ParametersData.Params.IsPlayerSpotted).Value = false;
 
-        _attacker.CanAttack -= () => Parameters.Get(ParametersData.Params.CanAttack).Value = true;
-        _attacker.CanNotAttack -= () => Parameters.Get(ParametersData.Params.CanAttack).Value = false;
+        _attacker.BecameAbleToAttack -= () => Parameters.Get(ParametersData.Params.CanAttack).Value = true;
+        _attacker.BecameUnableToAttack -= () => Parameters.Get(ParametersData.Params.CanAttack).Value = false;
     }
 }

@@ -10,8 +10,8 @@ public class Attacker : MonoBehaviour
 
     private Coroutine _timerAction;
 
-    public event Action CanAttack;
-    public event Action CanNotAttack;
+    public event Action BecameAbleToAttack;
+    public event Action BecameUnableToAttack;
     public event Action Attacked;
 
     private void OnTriggerEnter2D(Collider2D collision)
@@ -19,7 +19,7 @@ public class Attacker : MonoBehaviour
         if (collision.TryGetComponent(out IDamageble damageble))
         {
             _damageble = damageble;
-            CanAttack?.Invoke();
+            BecameAbleToAttack?.Invoke();
         }
     }
 
@@ -28,7 +28,7 @@ public class Attacker : MonoBehaviour
         if (collision.TryGetComponent(out IDamageble damageble))
         {
             _damageble = null;
-            CanNotAttack?.Invoke();
+            BecameUnableToAttack?.Invoke();
         }
     }
 

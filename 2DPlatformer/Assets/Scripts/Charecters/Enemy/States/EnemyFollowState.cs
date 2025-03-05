@@ -1,18 +1,21 @@
-public class EnemyFollowState : IState
+using System.Collections.Generic;
+
+public class EnemyFollowState : State
 {
-    public IState Update(Enemy context)
+    private Enemy _context;
+
+    public EnemyFollowState(Enemy context)
     {
-        if (context.Parameters.Get(ParametersData.Params.IsPlayerSpotted).Value == false)
-            return new EnemyPatrolState();
-        else if(context.Parameters.Get(ParametersData.Params.CanAttack).Value)
-            return new EnemyAttackState();
+        _context = context;
 
-        IState nextState = this;
-
-        context.Follower.Follow(context.PlayerTarget);
-
-        return nextState;
+        EnterConditions = new List<Parameter>()
+        {
+            new Parameter(nameof(ParametersData.Params.IsPlayerSpotted), true)
+        };
     }
 
-    public void Exit(Enemy enemy) { }
+    public override void Update() =>
+        _context.Follower.Follow(_context.PlayerTarget);
+
+    public override void Exit() { }
 }

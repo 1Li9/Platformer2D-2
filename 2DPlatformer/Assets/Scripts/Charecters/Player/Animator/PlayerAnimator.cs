@@ -1,37 +1,26 @@
 using System;
 using UnityEngine;
 
-[RequireComponent(typeof(Player))]
-public class PlayerAnimator : MonoBehaviour
+public class PlayerAnimator
 {
-    [SerializeField] private Animator _animator;
-    [SerializeField] private GroundChecker _groundChecker;
-    [SerializeField] private Attacker _attacker;
+    private Animator _animator;
+    private GroundChecker _groundChecker;
+    private Attacker _attacker;
 
-    private Player _player;
     private Rigidbody2D _rigidbody;
 
-    private void Awake() =>
-        _player = GetComponent<Player>();
-
-    private void Start() =>
-        _rigidbody = _player.Rigitbody;
-
-    private void OnEnable()
+    public PlayerAnimator(Player context, Animator animator, GroundChecker groundChecker, Attacker attacker)
     {
-        _player.Dead += UpdateDead;
-        _attacker.Attacked += UpdateTriggerIsAtacked;
+        _animator = animator;
+        _groundChecker = groundChecker;
+        _attacker = attacker;
+        _rigidbody = context.Rigitbody;
 
+        context.Dead += UpdateDead;
+        _attacker.Attacked += UpdateTriggerIsAtacked;
     }
 
-    private void OnDisable()
-    {
-        _player.Dead -= UpdateDead;
-        _attacker.Attacked += UpdateTriggerIsAtacked;
-
-    }
-
-    private void Update()
+    public void Update()
     {
         UpdateHorizontalSpeed();
         UpdateVerticalVelocity();

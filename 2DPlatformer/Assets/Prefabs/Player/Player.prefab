@@ -403,7 +403,6 @@ GameObject:
   - component: {fileID: 5858107722283135902}
   - component: {fileID: 3078584053814527070}
   - component: {fileID: 5334161031739032889}
-  - component: {fileID: 4561912677874214442}
   m_Layer: 0
   m_Name: Player
   m_TagString: Untagged
@@ -555,7 +554,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b0959380326b4844bc344a434a8baaf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _beginHealthPoints: 0
+  _animator: {fileID: 9179727850381234685}
+  _beginHealthPoints: 100
   _jumpForce: 450
   _speed: 3
   _attackCooldownTime: 0
@@ -564,21 +564,6 @@ MonoBehaviour:
   _attacker: {fileID: 5101181984637379577}
   _jumpButton: 32
   _attackButton: 323
---- !u!114 &4561912677874214442
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7957795321701238904}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fa15be811f96dd141adbe77e0956555f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _animator: {fileID: 9179727850381234685}
-  _groundChecker: {fileID: 7641470122137142371}
-  _attacker: {fileID: 5101181984637379577}
 --- !u!1 &8297597513971245352
 GameObject:
   m_ObjectHideFlags: 0

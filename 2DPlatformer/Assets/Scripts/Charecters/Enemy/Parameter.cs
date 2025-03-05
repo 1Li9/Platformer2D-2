@@ -6,6 +6,12 @@ public class Parameter
         Value = false;
     }
 
+    public Parameter(string name, bool value)
+    {
+        Name = name;
+        Value = value;
+    }
+
     public string Name { get; }
     public bool Value { get; set; }
 

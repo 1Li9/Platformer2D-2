@@ -1,18 +1,27 @@
-public class EnemyPatrolState : IState
+using System.Collections.Generic;
+
+public class EnemyPatrolState : State
 {
     private const float ChangeTarget = .2f;
 
-    public IState Update(Enemy context)
+    private Enemy _context;
+
+    public EnemyPatrolState(Enemy context)
     {
-        if (context.Parameters.Get(ParametersData.Params.IsPlayerSpotted).Value)
-            return new EnemyFollowState();
+        _context = context;
 
-        TargetsMap targetsMap = context.TargetsMap;
-
-        context.Follower.Follow(targetsMap.CurrentTarget, () => targetsMap.SelectNextTarget(), ChangeTarget);
-
-        return this;
+        EnterConditions = new List<Parameter>()
+        {
+            new Parameter(nameof(ParametersData.Params.IsPlayerSpotted), false)
+        };
     }
 
-    public void Exit(Enemy enemy) { }
+    public override void Update()
+    {
+        TargetsMap targetsMap = _context.TargetsMap;
+
+        _context.Follower.Follow(targetsMap.CurrentTarget, () => targetsMap.SelectNextTarget(), ChangeTarget);
+    }
+
+    public override void Exit() { }
 }

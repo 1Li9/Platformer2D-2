@@ -4,6 +4,7 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody2D), typeof(InputReader))]
 public class Player : MonoBehaviour, IMoveble, IDamageble
 {
+    [SerializeField] private Animator _animator;
     [SerializeField] private float _beginHealthPoints;
     [SerializeField] private float _jumpForce;
     [SerializeField] private float _speed;
@@ -15,6 +16,7 @@ public class Player : MonoBehaviour, IMoveble, IDamageble
     [SerializeField] private KeyCode _attackButton = KeyCode.Mouse0;
 
     private InputReader _inputReader;
+    private PlayerAnimator _playerAnimator;
     private Mover _mover;
     private Jumper _jumper;
     private CharacterFlipper _flipper;
@@ -29,12 +31,15 @@ public class Player : MonoBehaviour, IMoveble, IDamageble
     {
         Rigitbody = GetComponent<Rigidbody2D>();
         _inputReader = GetComponent<InputReader>();
+        _playerAnimator = new PlayerAnimator(this, _animator, _groundChecker, _attacker);
         _mover = new Mover(this);
         _jumper = new Jumper(this);
         _flipper = new CharacterFlipper(this);
         _health = new Health(_beginHealthPoints);
-        OnHealthPointsChanged?.Invoke(_health.HealthPoints);
     }
+
+    private void Start() =>
+        OnHealthPointsChanged?.Invoke(_health.HealthPoints);
 
     private void OnEnable()
     {
@@ -47,6 +52,9 @@ public class Player : MonoBehaviour, IMoveble, IDamageble
         _inputReader.OnInputChanged -= ProcessMovement;
         _inputReader.OnInputChanged -= Attack;
     }
+
+    private void Update() =>
+        _playerAnimator.Update();
 
     public void TakeDamage(float damage)
     {

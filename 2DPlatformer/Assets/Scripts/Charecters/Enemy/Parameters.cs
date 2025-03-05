@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-public class Parameters 
+public class Parameters
 {
     private Dictionary<int, Parameter> _parameters;
 
@@ -10,8 +10,13 @@ public class Parameters
         CreateParameters(parameters);
     }
 
-    public Parameter Get(int hash) =>
-        _parameters[hash];
+    public Parameter Get(int hash)
+    {
+        if (_parameters.ContainsKey(hash))
+            return _parameters[hash];
+
+        throw new System.ArgumentNullException();
+    }
 
     private void CreateParameters(List<Parameter> parameters)
     {
