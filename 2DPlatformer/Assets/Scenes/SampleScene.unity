@@ -8497,6 +8497,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 1523080906}
     - target: {fileID: 5334161031739032889, guid: ba153a0f77ffddc4783f6262f4e3e818, type: 3}
+      propertyPath: _isImmortal
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5334161031739032889, guid: ba153a0f77ffddc4783f6262f4e3e818, type: 3}
       propertyPath: _healthPoints
       value: 100
       objectReference: {fileID: 0}
