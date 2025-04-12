@@ -1,26 +1,14 @@
-using System.Collections.Generic;
-
-public class EnemyPatrolState : State
+public class EnemyPatrolState : EnemyState
 {
     private const float ChangeTarget = .2f;
 
-    private Enemy _context;
-
-    public EnemyPatrolState(Enemy context)
-    {
-        _context = context;
-
-        EnterConditions = new List<Parameter>()
-        {
-            new Parameter(nameof(ParametersData.Params.IsPlayerSpotted), false)
-        };
-    }
+    public EnemyPatrolState(Enemy context) : base(context) { }
 
     public override void Update()
     {
-        TargetsMap targetsMap = _context.TargetsMap;
+        TargetsMap targetsMap = Context.TargetsMap;
 
-        _context.Follower.Follow(targetsMap.CurrentTarget, () => targetsMap.SelectNextTarget(), ChangeTarget);
+        Context.Follower.Follow(targetsMap.CurrentTarget, () => targetsMap.SelectNextTarget(), ChangeTarget);
     }
 
     public override void Exit() { }

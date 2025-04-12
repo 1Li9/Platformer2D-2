@@ -1,33 +1,22 @@
-using System.Collections.Generic;
 using UnityEngine;
 
-public class EnemyDeadState : State
+public class EnemyDeadState : EnemyState
 {
     private readonly float _deadTime = 2f;
 
     private Coroutine _timerAction;
 
-    private Enemy _context;
-
-    public EnemyDeadState(Enemy context)
-    {
-        _context = context;
-
-        EnterConditions = new List<Parameter>()
-        {
-            new Parameter(nameof(ParametersData.Params.IsDead), true)
-        };
-    }
+    public EnemyDeadState(Enemy context) : base(context) { }
 
     public override void Update()
     {
         if (_timerAction != null)
             return;
 
-        _context.Rigidbody.velocity = Vector3.zero;
-        _context.Rigidbody.isKinematic = true;
-        _context.Collider.enabled = false;
-        _timerAction = _context.Timer.DoActionDelayed(() => Exit(), _deadTime);
+        Context.Rigidbody.velocity = Vector3.zero;
+        Context.Rigidbody.isKinematic = true;
+        Context.Collider.enabled = false;
+        _timerAction = Context.Timer.DoActionDelayed(() => Exit(), _deadTime);
     }
 
     public override void Exit()
@@ -35,8 +24,8 @@ public class EnemyDeadState : State
         if (_timerAction == null)
             return;
 
-        _context.StopCoroutine(_timerAction);
+        Context.StopCoroutine(_timerAction);
         _timerAction = null;
-        Object.Destroy(_context.gameObject);
+        Object.Destroy(Context.gameObject);
     }
 }

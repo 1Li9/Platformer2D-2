@@ -1,21 +1,9 @@
-using System.Collections.Generic;
-
-public class EnemyAttackState : State
+public class EnemyAttackState : EnemyState
 {
-    private Enemy _context;
-
-    public EnemyAttackState(Enemy context)
-    {
-        _context = context;
-
-        EnterConditions = new List<Parameter>()
-        {
-            new Parameter(nameof(ParametersData.Params.CanAttack), true)
-        };
-    }
+    public EnemyAttackState(Enemy context) : base(context) { }
 
     public override void Update() =>
-        _context.Attacker.Attack(_context.Timer, _context.AttackCooldownTime);
+        Context.Attacker.Attack(Context.Timer, Context.AttackCooldownTime);
 
     public override void Exit() { }
 }

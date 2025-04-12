@@ -6,20 +6,19 @@ public class Attacker : MonoBehaviour
     [SerializeField] private float _damage;
 
     private IDamageble _damageble;
-    private bool _canAttack = true;
-
     private Coroutine _timerAction;
+    private bool _isAttackCooldowned = false;
 
-    public event Action BecameAbleToAttack;
-    public event Action BecameUnableToAttack;
     public event Action Attacked;
+
+    public bool CanAttack { get; private set; }
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if (collision.TryGetComponent(out IDamageble damageble))
         {
             _damageble = damageble;
-            BecameAbleToAttack?.Invoke();
+            CanAttack = true;
         }
     }
 
@@ -28,19 +27,19 @@ public class Attacker : MonoBehaviour
         if (collision.TryGetComponent(out IDamageble damageble))
         {
             _damageble = null;
-            BecameUnableToAttack?.Invoke();
+            CanAttack = false;
         }
     }
 
     public void Attack(Timer timer, float cooldownTime)
     {
-        if (_canAttack == false)
+        if (_isAttackCooldowned)
             return;
 
         _damageble?.TakeDamage(_damage);
         Attacked?.Invoke();
         SetCooldown(timer, cooldownTime);
-        _canAttack = false;
+        _isAttackCooldowned = true;
     }
 
     private void SetCooldown(Timer timer, float cooldownTime)
@@ -51,6 +50,6 @@ public class Attacker : MonoBehaviour
             _timerAction = null;
         }
 
-        _timerAction = timer.DoActionDelayed(() => _canAttack = true, cooldownTime);
+        _timerAction = timer.DoActionDelayed(() => _isAttackCooldowned = false, cooldownTime);
     }
 }
