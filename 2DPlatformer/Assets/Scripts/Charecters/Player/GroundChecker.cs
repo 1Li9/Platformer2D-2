@@ -2,17 +2,19 @@ using UnityEngine;
 
 public class GroundChecker : MonoBehaviour
 {
-    public bool IsGrounded { get; private set; } = false;
+    private int _numberOfTouches = 0;
+
+    public bool IsGrounded => _numberOfTouches > 0;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
         if(collision.TryGetComponent(out Ground _))
-            IsGrounded= true;
+            _numberOfTouches++;
     }
 
     private void OnTriggerExit2D(Collider2D collision)
     {
         if (collision.TryGetComponent(out Ground _))
-            IsGrounded = false;
+            _numberOfTouches--;
     }
 }

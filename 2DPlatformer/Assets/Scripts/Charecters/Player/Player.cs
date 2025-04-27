@@ -1,10 +1,9 @@
 using System;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody2D), typeof(InputReader))]
+[RequireComponent(typeof(Rigidbody2D), typeof(InputReader), typeof(PlayerAnimator))]
 public class Player : MonoBehaviour, IMoveble, IDamageble
 {
-    [SerializeField] private Animator _animator;
     [SerializeField] private float _beginHealthPoints;
     [SerializeField] private float _jumpForce;
     [SerializeField] private float _speed;
@@ -20,26 +19,26 @@ public class Player : MonoBehaviour, IMoveble, IDamageble
     private Mover _mover;
     private Jumper _jumper;
     private CharacterFlipper _flipper;
-    private Health _health;
 
     public Rigidbody2D Rigitbody { get; private set; }
+    public Health Health { get; private set; }
 
     public event Action Dead;
-    public event Action<float> OnHealthPointsChanged;
 
     private void Awake()
     {
         Rigitbody = GetComponent<Rigidbody2D>();
         _inputReader = GetComponent<InputReader>();
-        _playerAnimator = new PlayerAnimator(this, _animator, _groundChecker, _attacker);
-        _mover = new Mover(this);
-        _jumper = new Jumper(this);
-        _flipper = new CharacterFlipper(this);
-        _health = new Health(_beginHealthPoints);
+        _playerAnimator = GetComponent<PlayerAnimator>();
+
+        _mover = new Mover(this, _playerAnimator);
+        _jumper = new Jumper(this, _playerAnimator);
+        _flipper = new CharacterFlipper(transform);
+        Health = new Health(_playerAnimator);
     }
 
     private void Start() =>
-        OnHealthPointsChanged?.Invoke(_health.HealthPoints);
+        Health.SetHealthPoints(_beginHealthPoints);
 
     private void OnEnable()
     {
@@ -53,32 +52,26 @@ public class Player : MonoBehaviour, IMoveble, IDamageble
         _inputReader.OnInputChanged -= Attack;
     }
 
-    private void Update() =>
-        _playerAnimator.Update();
-
     public void TakeDamage(float damage)
     {
-        if (_health.IsAlive == false)
+        if (Health.IsAlive == false)
             return;
 
-        _health.TakeDamage(damage);
+        Health.TakeDamage(damage);
 
-        OnHealthPointsChanged?.Invoke(_health.HealthPoints);
-
-        if (_health.IsAlive == false)
+        if (Health.IsAlive == false)
             Dead?.Invoke();
     }
 
-    public void Heal(float healthPoints)
-    {
-        _health.Heal(healthPoints);
-        OnHealthPointsChanged?.Invoke(_health.HealthPoints);
-    }
+    public void Heal(float healthPoints) =>
+        Health.Heal(healthPoints);
 
     private void ProcessMovement(InputInformation information)
     {
-        if (_health.IsAlive == false)
+        if (Health.IsAlive == false)
             return;
+
+        _playerAnimator.SetIsGrounded(_groundChecker.IsGrounded);
 
         _mover.Move(information.Axis * _speed);
 
@@ -91,10 +84,10 @@ public class Player : MonoBehaviour, IMoveble, IDamageble
 
     private void Attack(InputInformation information)
     {
-        if (_health.IsAlive == false)
+        if (Health.IsAlive == false)
             return;
 
         if (information.KeyCode == _attackButton)
-            _attacker.Attack(_timer, _attackCooldownTime);
+            _attacker.Attack(_timer, _attackCooldownTime, _playerAnimator);
     }
 }

@@ -10,10 +10,8 @@ public abstract class SpawnableObject : MonoBehaviour
     public SpawnableObjectView View { get => _view; set => _view = value; }
     public bool CanTake { get; set; } = true;
 
-    public virtual int Interact()
+    public void Interact()
     {
         WasInteracted.Invoke(this);
-
-        return 0;
     }
 }

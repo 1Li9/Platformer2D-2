@@ -43,7 +43,5 @@ public class Timer : MonoBehaviour
         yield return new WaitForSeconds(delayTime);
 
         action?.Invoke();
-
-        yield break;
     }
 }

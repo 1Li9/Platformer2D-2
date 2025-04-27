@@ -24,13 +24,13 @@ public class HealthUI : MonoBehaviour
 
     private void OnEnable()
     {
-        _player.OnHealthPointsChanged += Change;
+        _player.Health.OnHealthPointsChanged += Change;
         _player.Dead += ShowDeadScreen;
     }
 
     private void OnDisable()
     {
-        _player.OnHealthPointsChanged -= Change;
+        _player.Health.OnHealthPointsChanged -= Change;
         _player.Dead -= ShowDeadScreen;
     }
 

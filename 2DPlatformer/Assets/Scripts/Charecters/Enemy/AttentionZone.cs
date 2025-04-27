@@ -2,7 +2,7 @@ using UnityEngine;
 
 public class AttentionZone : MonoBehaviour
 {
-    public bool IsPlayerSpotted;
+    public bool IsPlayerSpotted { get; private set; } = false;
 
     private void OnTriggerEnter2D(Collider2D collision)
     {

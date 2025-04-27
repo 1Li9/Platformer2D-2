@@ -31,13 +31,14 @@ public class Attacker : MonoBehaviour
         }
     }
 
-    public void Attack(Timer timer, float cooldownTime)
+    public void Attack(Timer timer, float cooldownTime, IAnimator animator)
     {
         if (_isAttackCooldowned)
             return;
 
         _damageble?.TakeDamage(_damage);
         Attacked?.Invoke();
+        animator.UpdateIsAtackedTrigger();
         SetCooldown(timer, cooldownTime);
         _isAttackCooldowned = true;
     }

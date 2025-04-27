@@ -8,7 +8,7 @@ public class CameraTargetFollower : MonoBehaviour
     [SerializeField] private float _speed;
     [SerializeField] private float _maxHeight;
 
-    private void Update()
+    private void LateUpdate()
     {
         Vector3 position2d = Vector3.Scale(Vector3.Lerp(transform.position, _target.position, _speed * Time.deltaTime), new Vector3(1f,1f, 0f));
         transform.position = position2d + Vector3.Scale(transform.position, new Vector3(0f, 0f, 1f));

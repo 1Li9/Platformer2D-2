@@ -1,8 +1,8 @@
 using System;
 using UnityEngine;
 
-[RequireComponent(typeof(Collider2D), typeof(Rigidbody2D))]
-public class Enemy : MonoBehaviour, IDamageble, IStateble
+[RequireComponent(typeof(Collider2D), typeof(Rigidbody2D), typeof(EnemyAnimator))]
+public class Enemy : MonoBehaviour, IDamageble//, IStateble
 {
     [SerializeField] private float _beginHealthPoints;
     [SerializeField] private float _moveSpeed;
@@ -14,11 +14,12 @@ public class Enemy : MonoBehaviour, IDamageble, IStateble
     [SerializeField] private Target _playerTarget;
     [SerializeField] private Attacker _attacker;
 
+    private EnemyAnimator _enemyAnimator;
+
     private Health _health;
     private CharacterFlipper _flipper;
 
-    private StateMachine _stateMachine;
-    private EnemyAnimator _enemyAnimator;
+    private FiniteStateMachine _stateMachine;
 
     public event Action Dead;
 
@@ -35,18 +36,20 @@ public class Enemy : MonoBehaviour, IDamageble, IStateble
 
     private void Awake()
     {
-        _health = new Health(_beginHealthPoints);
-        _flipper = new CharacterFlipper(this);
+        _enemyAnimator = GetComponent<EnemyAnimator>();
+
+        _health = new Health(_enemyAnimator);
+        _flipper = new CharacterFlipper(transform);
         Follower = new(this, _flipper, _moveSpeed);
 
-        EnemyStatesPool enemyStatesPool = new(this);
-        _stateMachine = new StateMachine(enemyStatesPool);
-
-        _enemyAnimator = new EnemyAnimator(this, _animator);
+        _stateMachine = new EnemyFiniteStateMachineFactory(this, _enemyAnimator).Create();
 
         Collider = GetComponent<Collider2D>();
         Rigidbody = GetComponent<Rigidbody2D>();
     }
+
+    private void Start() =>
+        _health.SetHealthPoints(_beginHealthPoints);
 
     private void Update() =>
         _stateMachine.Update();

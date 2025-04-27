@@ -1,10 +1,28 @@
 using UnityEngine;
 
-public class EnemyAnimator
+public class EnemyAnimator : MonoBehaviour, IAnimator
 {
-    public EnemyAnimator(Enemy context, Animator animator)
+    [SerializeField] private Animator _animator;
+
+    public void SetHorizontalSpeed(float speed)
     {
-        context.Attacker.Attacked += () => animator.SetTrigger(EnemyAnimatorData.Params.IsAttacked);
-        context.Dead += () => animator.SetTrigger(EnemyAnimatorData.Params.Dead);
+    }
+
+    public void SetIsGrounded(bool isGrounded)
+    {
+    }
+
+    public void SetVerticalSpeed(float speed)
+    {
+    }
+
+    public void UpdateDeadTrigger()
+    {
+        _animator.SetTrigger(EnemyAnimatorData.Params.Dead);
+    }
+
+    public void UpdateIsAtackedTrigger()
+    {
+        _animator.SetTrigger(EnemyAnimatorData.Params.IsAttacked);
     }
 }
