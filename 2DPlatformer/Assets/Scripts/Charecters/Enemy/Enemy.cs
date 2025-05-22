@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Collider2D), typeof(Rigidbody2D), typeof(EnemyAnimator))]
-public class Enemy : MonoBehaviour, IDamageble//, IStateble
+public class Enemy : Charecter, IDamageble
 {
     [SerializeField] private float _beginHealthPoints;
     [SerializeField] private float _moveSpeed;
@@ -13,15 +13,16 @@ public class Enemy : MonoBehaviour, IDamageble//, IStateble
     [SerializeField] private AttentionZone _attentionZone;
     [SerializeField] private Target _playerTarget;
     [SerializeField] private Attacker _attacker;
+    [SerializeField] private CharecterView _view;
 
     private EnemyAnimator _enemyAnimator;
-
-    private Health _health;
     private CharacterFlipper _flipper;
-
     private FiniteStateMachine _stateMachine;
 
     public event Action Dead;
+
+    public override event Action<float> HealthChanged;
+    public override event Action<float> MaxHealthChanged;
 
     public float AttackCooldownTime => _attackCooldownTime;
     public Timer Timer => _timer;
@@ -29,17 +30,17 @@ public class Enemy : MonoBehaviour, IDamageble//, IStateble
     public AttentionZone AttentionZone => _attentionZone;
     public Target PlayerTarget => _playerTarget;
     public Attacker Attacker => _attacker;
-    public float HealthPoints => _health.HealthPoints;
     public Follower Follower { get; private set; }
     public Collider2D Collider { get; private set; }
     public Rigidbody2D Rigidbody { get; private set; }
+    public override Health Health { get; protected set; }
 
     private void Awake()
     {
         _enemyAnimator = GetComponent<EnemyAnimator>();
 
-        _health = new Health(_enemyAnimator);
-        _flipper = new CharacterFlipper(transform);
+        Health = new Health(_enemyAnimator, _beginHealthPoints);
+        _flipper = new CharacterFlipper(_view.transform);
         Follower = new(this, _flipper, _moveSpeed);
 
         _stateMachine = new EnemyFiniteStateMachineFactory(this, _enemyAnimator).Create();
@@ -48,22 +49,32 @@ public class Enemy : MonoBehaviour, IDamageble//, IStateble
         Rigidbody = GetComponent<Rigidbody2D>();
     }
 
+    private void OnEnable()
+    {
+        Health.ValueChanged += (value) => HealthChanged?.Invoke(value);
+        Health.MaxValueChanged += (value) => MaxHealthChanged?.Invoke(value);
+    }
+
+    private void OnDisable()
+    {
+        Health.ValueChanged -= (value) => HealthChanged?.Invoke(value);
+        Health.MaxValueChanged -= (value) => MaxHealthChanged?.Invoke(value);
+    }
+
     private void Start() =>
-        _health.SetHealthPoints(_beginHealthPoints);
+        Health.Initialize();
 
     private void Update() =>
         _stateMachine.Update();
 
     public void TakeDamage(float damage)
     {
-        if (_health.IsAlive == false)
+        if (Health.IsAlive == false)
             return;
 
-        _health.TakeDamage(damage);
+        Health.TakeDamage(damage);
 
-        if (_health.IsAlive == false)
-        {
+        if (Health.IsAlive == false)
             Dead?.Invoke();
-        }
     }
 }

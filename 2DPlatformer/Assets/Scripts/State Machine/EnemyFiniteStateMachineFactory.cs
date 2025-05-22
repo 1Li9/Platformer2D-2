@@ -22,9 +22,9 @@ public class EnemyFiniteStateMachineFactory
             .AddTransition<EnemyFollowState, EnemyPatrolState>(() => _context.AttentionZone.IsPlayerSpotted == false)
             .AddTransition<EnemyFollowState, EnemyAttackState>(() => _context.Attacker.CanAttack)
             .AddTransition<EnemyAttackState, EnemyFollowState>(() => _context.Attacker.CanAttack == false)
-            .AddTransition<EnemyPatrolState, EnemyDeadState>(() => _context.HealthPoints <= 0)
-            .AddTransition<EnemyAttackState, EnemyDeadState>(() => _context.HealthPoints <= 0)
-            .AddTransition<EnemyFollowState, EnemyDeadState>(() => _context.HealthPoints <= 0)
+            .AddTransition<EnemyPatrolState, EnemyDeadState>(() => _context.Health.Value <= 0)
+            .AddTransition<EnemyAttackState, EnemyDeadState>(() => _context.Health.Value <= 0)
+            .AddTransition<EnemyFollowState, EnemyDeadState>(() => _context.Health.Value <= 0)
             .SetFirstState<EnemyPatrolState>();
 
         return finiteStateMachine;

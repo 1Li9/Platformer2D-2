@@ -2,12 +2,13 @@ using System;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody2D), typeof(InputReader), typeof(PlayerAnimator))]
-public class Player : MonoBehaviour, IMoveble, IDamageble
+public class Player : Charecter, IMoveble, IDamageble
 {
     [SerializeField] private float _beginHealthPoints;
     [SerializeField] private float _jumpForce;
     [SerializeField] private float _speed;
     [SerializeField] private float _attackCooldownTime;
+    [SerializeField] private CharecterView _view;
     [SerializeField] private Timer _timer;
     [SerializeField] private GroundChecker _groundChecker;
     [SerializeField] private Attacker _attacker;
@@ -21,7 +22,10 @@ public class Player : MonoBehaviour, IMoveble, IDamageble
     private CharacterFlipper _flipper;
 
     public Rigidbody2D Rigitbody { get; private set; }
-    public Health Health { get; private set; }
+    public override Health Health { get; protected set; }
+
+    public override event Action<float> HealthChanged;
+    public override event Action<float> MaxHealthChanged;
 
     public event Action Dead;
 
@@ -33,24 +37,30 @@ public class Player : MonoBehaviour, IMoveble, IDamageble
 
         _mover = new Mover(this, _playerAnimator);
         _jumper = new Jumper(this, _playerAnimator);
-        _flipper = new CharacterFlipper(transform);
-        Health = new Health(_playerAnimator);
+        _flipper = new CharacterFlipper(_view.transform);
+        Health = new Health(_playerAnimator, _beginHealthPoints);
     }
-
-    private void Start() =>
-        Health.SetHealthPoints(_beginHealthPoints);
 
     private void OnEnable()
     {
         _inputReader.OnInputChanged += ProcessMovement;
         _inputReader.OnInputChanged += Attack;
+
+        Health.ValueChanged += (value) => HealthChanged?.Invoke(value);
+        Health.MaxValueChanged += (value) => MaxHealthChanged?.Invoke(value);
     }
 
     private void OnDisable()
     {
         _inputReader.OnInputChanged -= ProcessMovement;
         _inputReader.OnInputChanged -= Attack;
+
+        Health.ValueChanged -= (value) => HealthChanged?.Invoke(value);
+        Health.MaxValueChanged -= (value) => MaxHealthChanged?.Invoke(value);
     }
+
+    private void Start() =>
+        Health.Initialize();
 
     public void TakeDamage(float damage)
     {
@@ -64,7 +74,7 @@ public class Player : MonoBehaviour, IMoveble, IDamageble
     }
 
     public void Heal(float healthPoints) =>
-        Health.Heal(healthPoints);
+        Health.Increase(healthPoints);
 
     private void ProcessMovement(InputInformation information)
     {
