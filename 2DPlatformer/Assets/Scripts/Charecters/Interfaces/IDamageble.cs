@@ -1,4 +1,6 @@
 public interface IDamageble
 {
-    public void TakeDamage(float damage);
+    public bool IsAlive { get; }
+
+    public bool TryTakeDamage(float damage);
 }

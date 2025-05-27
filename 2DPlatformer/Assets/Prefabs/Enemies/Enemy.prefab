@@ -201,16 +201,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e4b8357708e4ecd4b8fa34378d02bf52, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _beginHealthPoints: 40
+  _beginHealthPoints: 100
   _moveSpeed: 2
+  _damage: 10
   _attackCooldownTime: 1
   _timer: {fileID: 0}
   _animator: {fileID: 3272127111727457363}
   _targetsMap: {fileID: 0}
   _attentionZone: {fileID: 5683495754521518079}
   _playerTarget: {fileID: 0}
-  _attacker: {fileID: 3901545233387118798}
-  _view: {fileID: 4628158411737924699}
+  _view: {fileID: 5142057373831059078}
+  _attackTrigger: {fileID: 1022172556171822468}
 --- !u!114 &7942288285308606712
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -235,7 +236,7 @@ GameObject:
   - component: {fileID: 4095170953250191579}
   - component: {fileID: 7636970380248303337}
   - component: {fileID: 3272127111727457363}
-  - component: {fileID: 4628158411737924699}
+  - component: {fileID: 5142057373831059078}
   m_Layer: 0
   m_Name: View
   m_TagString: Untagged
@@ -333,7 +334,7 @@ Animator:
   m_AllowConstantClipSamplingOptimization: 1
   m_KeepAnimatorStateOnDisable: 0
   m_WriteDefaultValuesOnDisable: 0
---- !u!114 &4628158411737924699
+--- !u!114 &5142057373831059078
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -342,7 +343,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 4154382371251292845}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 67485986f9699294eb54a09f6aba3022, type: 3}
+  m_Script: {fileID: 11500000, guid: 01b8d51238bcc1a41b9d0ab3822aaf85, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
 --- !u!1 &9105913752602236235
@@ -354,8 +355,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4503339037196571276}
-  - component: {fileID: 3901545233387118798}
   - component: {fileID: 3169456970790553147}
+  - component: {fileID: 1022172556171822468}
   m_Layer: 0
   m_Name: AttackTrigger
   m_TagString: Untagged
@@ -378,19 +379,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 4095170953250191579}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &3901545233387118798
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 9105913752602236235}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2cbbcfeb3954df74ea06be6174bb28cd, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _damage: 20
 --- !u!61 &3169456970790553147
 BoxCollider2D:
   m_ObjectHideFlags: 0
@@ -436,6 +424,18 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 0.31788924, y: 1}
   m_EdgeRadius: 0
+--- !u!114 &1022172556171822468
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9105913752602236235}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6665b7a5259d55c419a7568e6c341f50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &4873428662342472732
 PrefabInstance:
   m_ObjectHideFlags: 0

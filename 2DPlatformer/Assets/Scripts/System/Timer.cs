@@ -1,5 +1,5 @@
 using System;
-using System.Collections.Generic;
+using System.Collections;
 using UnityEngine;
 
 public class Timer : MonoBehaviour
@@ -13,7 +13,10 @@ public class Timer : MonoBehaviour
     public Coroutine DoActionDelayed(Action action, float delayTime) =>
         StartCoroutine(DoActionDelayedCoroutine(action, delayTime));
 
-    private IEnumerator<WaitForSeconds> DoActionRepeatingCoroutine(Action action, float timePeriod)
+    public Coroutine DoActionWhileDelayed(Action action, Func<bool> condition, Action callback, float delayTime) =>
+        StartCoroutine(DoActionWhileDelayedCoroutine(action, condition, callback, delayTime));
+
+    private IEnumerator DoActionRepeatingCoroutine(Action action, float timePeriod)
     {
         bool isActive = true;
         WaitForSeconds wait = new WaitForSeconds(timePeriod);
@@ -26,7 +29,7 @@ public class Timer : MonoBehaviour
         }
     }
 
-    private IEnumerator<WaitForSeconds> DoActionRepeatingCoroutine(Action action)
+    private IEnumerator DoActionRepeatingCoroutine(Action action)
     {
         bool isActive = true;
 
@@ -38,10 +41,26 @@ public class Timer : MonoBehaviour
         }
     }
 
-    private IEnumerator<WaitForSeconds> DoActionDelayedCoroutine(Action action, float delayTime)
+    private IEnumerator DoActionDelayedCoroutine(Action action, float delayTime)
     {
         yield return new WaitForSeconds(delayTime);
 
         action?.Invoke();
+    }
+
+    private IEnumerator DoActionWhileDelayedCoroutine(Action action, Func<bool> condition, Action callback, float delayTime)
+    {
+        if (condition == null)
+            throw new InvalidOperationException(nameof(condition));
+        WaitForSeconds wait = new(delayTime);
+
+        while (condition.Invoke())
+        {
+            action?.Invoke();
+
+            yield return wait;
+        }
+
+        callback?.Invoke();
     }
 }

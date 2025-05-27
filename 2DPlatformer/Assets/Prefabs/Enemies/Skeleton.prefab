@@ -12,6 +12,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Skeleton
       objectReference: {fileID: 0}
+    - target: {fileID: 3118879795184006167, guid: f3cd01cab38fcac4eb73fe9b1b9fe506, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: -0.6
+      objectReference: {fileID: 0}
     - target: {fileID: 3306651548035849792, guid: f3cd01cab38fcac4eb73fe9b1b9fe506, type: 3}
       propertyPath: m_LocalPosition.y
       value: 0

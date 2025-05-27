@@ -9,6 +9,7 @@ public abstract class HealthUI : MonoBehaviour
 
     private void OnEnable()
     {
+        Register();
         _charecter.HealthChanged += ChangeValue;
         _charecter.MaxHealthChanged += SetMaxValue;
     }
@@ -20,6 +21,7 @@ public abstract class HealthUI : MonoBehaviour
     }
 
     public abstract void ChangeValue(float value);
+    protected virtual void Register() { }
 
     private void SetMaxValue(float value) =>
         MaxValue = value;

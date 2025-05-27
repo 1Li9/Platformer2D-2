@@ -2,40 +2,47 @@ using System;
 using System.Collections;
 using UnityEngine;
 
-public class ValueAnimator : MonoBehaviour
+public class ValueAnimator
 {
-    [Range(0f, .02f)]
-    [SerializeField] private float _animationStep;
-
     private Coroutine _coroutine;
+    private int _stepsCount;
+    private float _timeStep;
+    private MonoBehaviour _context;
 
-    private void Awake()
+    public ValueAnimator(MonoBehaviour context)
     {
-        gameObject.SetActive(true);
+        _context = context;
+        _stepsCount = 120;
+        _timeStep = 1f;
     }
 
-    public void Animate(Action<float> action, float startValue, float finalValue)
+    public void Animate(Action<float> action, float startValue, float finalValue, float animationTime)
     {
         if (_coroutine != null)
         {
-            StopCoroutine(_coroutine);
+            _context.StopCoroutine(_coroutine);
             _coroutine = null;
         }
 
-        _coroutine = StartCoroutine(AnimateCoroutine(action, startValue, finalValue));
+        _coroutine = _context.StartCoroutine(AnimateCoroutine(action, startValue, finalValue, animationTime));
     }
 
-    private IEnumerator AnimateCoroutine(Action<float> action, float startValue, float finalValue)
+    private IEnumerator AnimateCoroutine(Action<float> action, float startValue, float finalValue, float animationTime)
     {
+        animationTime-= _timeStep;
+        animationTime = Mathf.Clamp(animationTime, 0f, _stepsCount);
+        float animationStep = _timeStep / _stepsCount;
         float progress = 0f;
+
+        WaitForSecondsRealtime wait = new(animationTime / _stepsCount);
 
         while (progress < 1f)
         {
-            startValue = Mathf.MoveTowards(startValue, finalValue, _animationStep);
-            progress += _animationStep;
+            startValue = Mathf.MoveTowards(startValue, finalValue, animationStep);
+            progress += animationStep;
             action?.Invoke(startValue);
 
-            yield return null;
+            yield return wait;
         }
 
         action?.Invoke(finalValue);

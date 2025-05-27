@@ -6,14 +6,17 @@ public class Enemy : Charecter, IDamageble
 {
     [SerializeField] private float _beginHealthPoints;
     [SerializeField] private float _moveSpeed;
+    [SerializeField] private float _damage;
     [SerializeField] private float _attackCooldownTime;
     [SerializeField] private Timer _timer;
     [SerializeField] private Animator _animator;
     [SerializeField] private TargetsMap _targetsMap;
     [SerializeField] private AttentionZone _attentionZone;
     [SerializeField] private Target _playerTarget;
-    [SerializeField] private Attacker _attacker;
-    [SerializeField] private CharecterView _view;
+    [SerializeField] private HandAttacker _attacker;
+    [SerializeField] private View _view;
+    [SerializeField] private AttackZone _attackTrigger;
+
 
     private EnemyAnimator _enemyAnimator;
     private CharacterFlipper _flipper;
@@ -25,11 +28,15 @@ public class Enemy : Charecter, IDamageble
     public override event Action<float> MaxHealthChanged;
 
     public float AttackCooldownTime => _attackCooldownTime;
+    public float Damage => _damage;
     public Timer Timer => _timer;
     public TargetsMap TargetsMap => _targetsMap;
     public AttentionZone AttentionZone => _attentionZone;
     public Target PlayerTarget => _playerTarget;
-    public Attacker Attacker => _attacker;
+    public HandAttacker Attacker => _attacker;
+    public AttackZone AttackTrigger => _attackTrigger;
+    public EnemyAnimator EnemyAnimator => _enemyAnimator;
+    public bool IsAlive => Health.IsAlive;
     public Follower Follower { get; private set; }
     public Collider2D Collider { get; private set; }
     public Rigidbody2D Rigidbody { get; private set; }
@@ -47,6 +54,9 @@ public class Enemy : Charecter, IDamageble
 
         Collider = GetComponent<Collider2D>();
         Rigidbody = GetComponent<Rigidbody2D>();
+
+        Attacker attacker = new();
+        _attacker = new HandAttacker(attacker, AttackCooldownTime, Timer);
     }
 
     private void OnEnable()
@@ -67,14 +77,16 @@ public class Enemy : Charecter, IDamageble
     private void Update() =>
         _stateMachine.Update();
 
-    public void TakeDamage(float damage)
+    public bool TryTakeDamage(float damage)
     {
         if (Health.IsAlive == false)
-            return;
+            return false;
 
         Health.TakeDamage(damage);
 
         if (Health.IsAlive == false)
             Dead?.Invoke();
+
+        return true;
     }
 }
