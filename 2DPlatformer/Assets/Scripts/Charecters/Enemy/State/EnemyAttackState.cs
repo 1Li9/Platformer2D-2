@@ -11,6 +11,6 @@ public class EnemyAttackState : EnemyStateBase
     {
         base.Update(stateChanger);
 
-        Context.Attacker.Attack(Context.Damage, Context.EnemyAnimator, Context.AttackTrigger.Damageble);
+        Context.Attacker.Attack(Context.Damage, Context.EnemyAnimator, Context.AttackZone);
     }
 }

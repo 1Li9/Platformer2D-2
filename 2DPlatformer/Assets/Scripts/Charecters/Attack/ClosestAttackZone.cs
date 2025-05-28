@@ -17,7 +17,7 @@ public class ClosestAttackZone : MonoBehaviour, IAttackZone
 
     private void OnTriggerEnter2D(Collider2D collision)
     {
-        if(collision.gameObject.TryGetComponent(out IDamageble damageble))
+        if (collision.gameObject.TryGetComponent(out IDamageble damageble))
             _damagebles.Add(damageble);
     }
 

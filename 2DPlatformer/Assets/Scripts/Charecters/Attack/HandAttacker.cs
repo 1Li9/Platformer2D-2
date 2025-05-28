@@ -17,12 +17,12 @@ public class HandAttacker : IAttacker
 
     public event Action Attacked;
 
-    public void Attack(float damage, IAnimator animator, IDamageble damageble)
+    public void Attack(float damage, IAnimator animator, IAttackZone zone)
     {
         if (_isCooldowned)
             return;
 
-        _attacker.Attack(damage, animator, damageble);
+        _attacker.Attack(damage, animator, zone);
 
         _isCooldowned = true;
         animator.UpdateIsAtackedTrigger();

@@ -121,9 +121,6 @@ public class Player : Charecter, IMoveble, IDamageble, IHealeble
             return;
 
         if (information.KeyCode == keyCode)
-        {
-            IDamageble damageble = attackZone.Damageble;
-            attacker.Attack(_damage, _playerAnimator, damageble);
-        }
+            attacker.Attack(_damage, _playerAnimator, attackZone);
     }
 }

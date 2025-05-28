@@ -4,14 +4,16 @@ using UnityEngine;
 public class VampirismAttackZoneView : MonoBehaviour
 {
     [SerializeField] private Player _player;
-    [Range(0f, 1f)]
-    [SerializeField] private float _maxAlpha;
+
+    private float _maxAlpha;
 
     private SpriteRenderer _renderer;
 
     private void OnEnable()
     {
         _renderer = GetComponent<SpriteRenderer>();
+        _maxAlpha = _renderer.color.a;
+        _renderer.color = GetResetedAlphaColor(_renderer.color);
 
         _player.VampirismAttacked += () => _renderer.color = GetMaxAlphaColor(_renderer.color);
         _player.VampirismIsReloading += (value) => _renderer.color = GetResetedAlphaColor(_renderer.color);
@@ -28,5 +30,4 @@ public class VampirismAttackZoneView : MonoBehaviour
 
     private Color GetMaxAlphaColor(Color color) =>
         GetResetedAlphaColor(color) + new Color(0, 0, 0, _maxAlpha);
-
 }

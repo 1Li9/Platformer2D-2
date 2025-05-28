@@ -32,7 +32,7 @@ public class Enemy : Charecter, IDamageble
     public AttentionZone AttentionZone => _attentionZone;
     public Target PlayerTarget => _playerTarget;
     public HandAttacker Attacker => _attacker;
-    public HandAttackZone AttackTrigger => _attackTrigger;
+    public HandAttackZone AttackZone => _attackTrigger;
     public EnemyAnimator EnemyAnimator => _enemyAnimator;
     public Follower Follower { get; private set; }
     public Collider2D Collider { get; private set; }

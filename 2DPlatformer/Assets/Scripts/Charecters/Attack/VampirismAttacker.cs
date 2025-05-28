@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 public class VampirismAttacker : IAttacker
 {
@@ -29,7 +28,7 @@ public class VampirismAttacker : IAttacker
     public event Action Attacked;
     public event Action<float> Reloading;
 
-    public void Attack(float damage, IAnimator animator, IDamageble damageble)
+    public void Attack(float damage, IAnimator animator, IAttackZone zone)
     {
         if (_isReloading | _isAttacking)
             return;
@@ -39,29 +38,22 @@ public class VampirismAttacker : IAttacker
 
         Attacked?.Invoke();
 
-        if (damageble == null)
-        {
-            _timer.DoActionWhileDelayed(
-                action: () => currentProgression -= _coolDown,
-                condition: () => currentProgression > 0f,
-                callback: () => ChangeConditions(currentProgression),
-                delayTime: _coolDown);
-
-            return;
-        }
-
         _timer.DoActionWhileDelayed(
-            action: () => Attack(damage, animator, damageble, ref currentProgression),
-            condition: () => currentProgression > 0f & damageble.IsAlive,
+            action: () => Attack(damage, animator, zone, ref currentProgression),
+            condition: () => currentProgression > 0f,
             callback: () => ChangeConditions(currentProgression),
             delayTime: _coolDown);
     }
 
-    private void Attack(float damage, IAnimator animator, IDamageble damageble, ref float currentTime)
+    private void Attack(float damage, IAnimator animator, IAttackZone zone, ref float currentTime)
     {
-        _attacker.Attack(damage, animator, damageble);
+        if (zone.CanAttack)
+        {
+            _attacker.Attack(damage, animator, zone);
+            _healeble.IncreaseHealth(_healPoints);
+        }
+
         currentTime -= _coolDown;
-        _healeble.IncreaseHealth(_healPoints);
     }
 
     private void ChangeConditions(float beginValue)
