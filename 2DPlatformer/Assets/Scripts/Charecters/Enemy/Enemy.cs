@@ -15,14 +15,12 @@ public class Enemy : Charecter, IDamageble
     [SerializeField] private Target _playerTarget;
     [SerializeField] private HandAttacker _attacker;
     [SerializeField] private View _view;
-    [SerializeField] private AttackZone _attackTrigger;
+    [SerializeField] private HandAttackZone _attackTrigger;
 
 
     private EnemyAnimator _enemyAnimator;
     private CharacterFlipper _flipper;
     private FiniteStateMachine _stateMachine;
-
-    public event Action Dead;
 
     public override event Action<float> HealthChanged;
     public override event Action<float> MaxHealthChanged;
@@ -34,9 +32,8 @@ public class Enemy : Charecter, IDamageble
     public AttentionZone AttentionZone => _attentionZone;
     public Target PlayerTarget => _playerTarget;
     public HandAttacker Attacker => _attacker;
-    public AttackZone AttackTrigger => _attackTrigger;
+    public HandAttackZone AttackTrigger => _attackTrigger;
     public EnemyAnimator EnemyAnimator => _enemyAnimator;
-    public bool IsAlive => Health.IsAlive;
     public Follower Follower { get; private set; }
     public Collider2D Collider { get; private set; }
     public Rigidbody2D Rigidbody { get; private set; }
@@ -76,17 +73,4 @@ public class Enemy : Charecter, IDamageble
 
     private void Update() =>
         _stateMachine.Update();
-
-    public bool TryTakeDamage(float damage)
-    {
-        if (Health.IsAlive == false)
-            return false;
-
-        Health.TakeDamage(damage);
-
-        if (Health.IsAlive == false)
-            Dead?.Invoke();
-
-        return true;
-    }
 }

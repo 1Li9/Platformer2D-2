@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class AttackZone : MonoBehaviour
+public class HandAttackZone : MonoBehaviour, IAttackZone
 {
     public IDamageble Damageble { get; private set; }
     public bool CanAttack => Damageble != null;

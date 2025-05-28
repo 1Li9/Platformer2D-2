@@ -16,8 +16,8 @@ public class Player : Charecter, IMoveble, IDamageble, IHealeble
     [SerializeField] private Timer _timer;
     [SerializeField] private GroundChecker _groundChecker;
 
-    [SerializeField] private AttackZone _attackTrigger;
-    [SerializeField] private AttackZone _vampirismAttackTrigger;
+    [SerializeField] private HandAttackZone _attackTrigger;
+    [SerializeField] private ClosestAttackZone _vampirismAttackTrigger;
     [SerializeField] private KeyCode _jumpButton = KeyCode.Space;
     [SerializeField] private KeyCode _usualAttackButton = KeyCode.Mouse0;
     [SerializeField] private KeyCode _vampirismAttackButton = KeyCode.Mouse1;
@@ -32,27 +32,24 @@ public class Player : Charecter, IMoveble, IDamageble, IHealeble
     private HandAttacker _usualAttacker;
 
     public override Health Health { get; protected set; }
-    public Rigidbody2D Rigitbody { get; private set; }
+    public Rigidbody2D Rigidbody { get; private set; }
     public float VampirismAttackReloadTime => _vampirismAttackReloadTime;
     public float VampirismAttackTime => _vampirismAttackTime;
-
-    public bool IsAlive => Health.IsAlive;
 
     public override event Action<float> HealthChanged;
     public override event Action<float> MaxHealthChanged;
 
-    public event Action Dead;
     public event Action<float> VampirismIsReloading;
     public event Action VampirismAttacked;
 
     private void Awake()
     {
-        Rigitbody = GetComponent<Rigidbody2D>();
+        Rigidbody = GetComponent<Rigidbody2D>();
         _inputReader = GetComponent<InputReader>();
         _playerAnimator = GetComponent<PlayerAnimator>();
 
         _mover = new Mover(this, _playerAnimator);
-        _jumper = new Jumper(this, _playerAnimator);
+        _jumper = new Jumper(this);
         _flipper = new CharacterFlipper(_view.transform);
         Health = new Health(_playerAnimator, _beginHealthPoints);
 
@@ -91,19 +88,6 @@ public class Player : Charecter, IMoveble, IDamageble, IHealeble
     private void Start() =>
         Health.Initialize();
 
-    public bool TryTakeDamage(float damage)
-    {
-        if (Health.IsAlive == false)
-            return false;
-
-        Health.TakeDamage(damage);
-
-        if (Health.IsAlive == false)
-            Dead?.Invoke();
-
-        return true;
-    }
-
     public void IncreaseHealth(float healthPoints) =>
         Health.Increase(healthPoints);
 
@@ -121,6 +105,8 @@ public class Player : Charecter, IMoveble, IDamageble, IHealeble
 
         if (_flipper.IsTurnedToRight & information.Axis < 0f | _flipper.IsTurnedToRight == false & information.Axis > 0f)
             _flipper.Flip();
+
+        _playerAnimator.SetVerticalSpeed(Rigidbody.velocity.y);
     }
 
     private void UsualAttack(InputInformation information) =>
@@ -129,7 +115,7 @@ public class Player : Charecter, IMoveble, IDamageble, IHealeble
     private void VampirismAttack(InputInformation information) =>
         Attack(information, _vampirismAttackButton, _vampirismAttacker, _vampirismAttackTrigger);
 
-    private void Attack(InputInformation information, KeyCode keyCode, IAttacker attacker, AttackZone attackZone)
+    private void Attack(InputInformation information, KeyCode keyCode, IAttacker attacker, IAttackZone attackZone)
     {
         if (Health.IsAlive == false)
             return;

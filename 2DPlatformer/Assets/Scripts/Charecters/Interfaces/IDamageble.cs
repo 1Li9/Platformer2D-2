@@ -1,4 +1,4 @@
-public interface IDamageble
+public interface IDamageble : ITransformable
 {
     public bool IsAlive { get; }
 

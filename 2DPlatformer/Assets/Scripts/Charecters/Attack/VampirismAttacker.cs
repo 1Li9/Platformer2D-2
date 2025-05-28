@@ -62,7 +62,6 @@ public class VampirismAttacker : IAttacker
         _attacker.Attack(damage, animator, damageble);
         currentTime -= _coolDown;
         _healeble.IncreaseHealth(_healPoints);
-        Debug.Log(currentTime);
     }
 
     private void ChangeConditions(float beginValue)
@@ -71,6 +70,5 @@ public class VampirismAttacker : IAttacker
         _isAttacking = false;
         _timer.DoActionDelayed(() => _isReloading = false, _reloadTime);
         Reloading?.Invoke(beginValue);
-        Debug.Log("22");
     }
 }

@@ -111,6 +111,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _player: {fileID: 5334161031739032889}
+  _maxAlpha: 0
 --- !u!1 &128475430952109074
 GameObject:
   m_ObjectHideFlags: 0
@@ -746,8 +747,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1554080865944122179}
-  - component: {fileID: 8740615797546228995}
   - component: {fileID: 2578219597931372551}
+  - component: {fileID: 9134454462987713483}
   m_Layer: 0
   m_Name: VampirismAttackTrigger
   m_TagString: Untagged
@@ -770,18 +771,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 3609454025661083425}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8740615797546228995
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6319864933588819691}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6665b7a5259d55c419a7568e6c341f50, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!58 &2578219597931372551
 CircleCollider2D:
   m_ObjectHideFlags: 0
@@ -817,6 +806,18 @@ CircleCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Radius: 0.5
+--- !u!114 &9134454462987713483
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6319864933588819691}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ec2da4f911d98bc4ea91b66c4896dcdc, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &7034841888002295953
 GameObject:
   m_ObjectHideFlags: 0
@@ -1165,7 +1166,7 @@ MonoBehaviour:
   _timer: {fileID: 0}
   _groundChecker: {fileID: 7641470122137142371}
   _attackTrigger: {fileID: 3657029681247430716}
-  _vampirismAttackTrigger: {fileID: 8740615797546228995}
+  _vampirismAttackTrigger: {fileID: 9134454462987713483}
   _jumpButton: 32
   _usualAttackButton: 323
   _vampirismAttackButton: 324

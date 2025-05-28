@@ -7,7 +7,7 @@ public class Mover
 
     public Mover(IMoveble context, IAnimator animator)
     {
-        _rigidbody = context.Rigitbody;
+        _rigidbody = context.Rigidbody;
         _animator = animator;
     }
 
